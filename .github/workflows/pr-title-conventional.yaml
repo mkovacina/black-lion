@@ -1,0 +1,17 @@
+name: Check PR title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make script executable
+        run: chmod +x scripts/check-pr-title-conventional.sh
+
+      - name: Validate PR title
+        run: ./scripts/check-pr-title-conventional.sh "${{ github.event.pull_request.title }}"
