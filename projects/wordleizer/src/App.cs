@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 Console.WriteLine("Hello, World!");
 
-var stream = File.OpenRead(@"data\dwyl\words_alpha.txt");
+var stream = File.OpenRead(@"data/dwyl/words_alpha.txt");
 using var reader = new StreamReader(stream);
 
 var root = new Node { Value = ' ' };
