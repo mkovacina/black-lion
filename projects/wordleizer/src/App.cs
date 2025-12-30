@@ -1,7 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using System.ComponentModel.DataAnnotations;
+
 Console.WriteLine("Hello, World!");
 
-var stream = File.OpenRead(@"data\dwyl\words_alpha.txt");
+var stream = File.OpenRead(@"data/dwyl/words_alpha.txt");
 using var reader = new StreamReader(stream);
 
 var root = new Node { Value = ' ' };
@@ -34,6 +36,51 @@ while (!reader.EndOfStream)
     }
 }
 
+static string PickNextWord(Node root, string guess, string result, int position = 0)
+{
+    if (root.ChildMap.Count == 0) return string.Empty;
+
+    if (result[position] == 'v')
+    {
+        return guess[position].ToString() + PickNextWord(root.ChildMap[guess[position]], guess, result, position + 1);
+    }
+
+    var excludeChars = new HashSet<char>();
+    for(int x = 0; x < guess.Length; x++)
+    {
+        if (result[x] == 'x')
+        {
+            excludeChars.Add(guess[x]);
+        }
+        if (result[x] == '~' && x == position)
+        {
+            excludeChars.Add(guess[x]);
+        }
+    }
+
+    while(true)
+    {
+        var max = root.ChildMap
+                        .Where(kv => !excludeChars.Contains(kv.Key))
+                        .MaxBy(kv => kv.Value.Count);
+
+        if (position == 4)
+        {
+            return max.Key.ToString();
+        }
+
+        var nextWord = PickNextWord(max.Value, guess, result, position + 1);
+
+        if (nextWord == string.Empty)
+        {
+            excludeChars.Add(max.Key);
+            continue;
+        }
+
+        return max.Key + nextWord;
+    }
+}
+
 var word = root;
 while (word != null)
 {
@@ -49,6 +96,9 @@ Console.WriteLine($"Total words: {total}");
 
 Console.WriteLine($"Input words: {inputWordCount}");
 Console.WriteLine($"Total unique nodes: {count}");
+
+var nextWord = PickNextWord(root, "audio", "x~xvx");    
+Console.WriteLine($"Next word: {nextWord}");    
 
 class Node
 {
