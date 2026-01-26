@@ -1,0 +1,3 @@
+[submodule "projects/red-pajama/third-party/llama.cpp"]
+	path = projects/red-pajama/third-party/llama.cpp
+	url = https://github.com/ggerganov/llama.cpp
