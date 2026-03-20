@@ -379,7 +379,16 @@ def main() -> int:
         default=str(Path.home() / "Library/Messages/chat.db"),
         help="Path to chat.db (default: ~/Library/Messages/chat.db)",
     )
-    ap.add_argument("handles", nargs="+", help="Handles (phone numbers or emails) to export")
+    ap.add_argument("handles", nargs="*", help="Handles (phone numbers or emails) to export")
+    ap.add_argument(
+        "--list-handles",
+        action="store_true",
+        help="List all handles found in the DB with chat/message counts and exit",
+    )
+    ap.add_argument(
+        "--list-chats",
+        help="List chats for a specific handle and exit (pass handle as argument)",
+    )
     args = ap.parse_args()
 
     out_dir = Path(args.out).expanduser().resolve()
@@ -400,6 +409,49 @@ def main() -> int:
 
     conn = sqlite3.connect(f"file:{tmp_db}?mode=ro", uri=True)
     try:
+        # Diagnostic: list handles with counts
+        if args.list_handles:
+            rows = conn.execute(
+                """
+                SELECT h.id,
+                       COUNT(DISTINCT chj.chat_id) AS chat_count,
+                       COUNT(cmj.message_id) AS message_count
+                FROM handle h
+                LEFT JOIN chat_handle_join chj ON chj.handle_id = h.ROWID
+                LEFT JOIN chat_message_join cmj ON cmj.chat_id = chj.chat_id
+                GROUP BY h.id
+                ORDER BY message_count DESC
+                """
+            ).fetchall()
+            print("handle\tchats\tmessages")
+            for hid, chats, msgs in rows:
+                print(f"{hid}\t{chats}\t{msgs}")
+            return 0
+
+        # Diagnostic: list chats for a given handle
+        if args.list_chats:
+            hval = args.list_chats
+            rows = conn.execute(
+                """
+                SELECT c.ROWID, COALESCE(c.display_name,''), COUNT(cmj.message_id) AS msg_count
+                FROM chat c
+                JOIN chat_handle_join chj ON chj.chat_id = c.ROWID
+                JOIN handle h ON h.ROWID = chj.handle_id
+                LEFT JOIN chat_message_join cmj ON cmj.chat_id = c.ROWID
+                WHERE h.id = ?
+                GROUP BY c.ROWID
+                ORDER BY msg_count DESC
+                """,
+                (hval,),
+            ).fetchall()
+            if not rows:
+                print(f"No chats found for handle: {hval}")
+                return 0
+            print("chat_id\tdisplay_name\tmessage_count")
+            for cid, dname, cnt in rows:
+                print(f"{cid}\t{dname}\t{cnt}")
+            return 0
+
         for h in args.handles:
             export_per_chat_for_handle(conn, out_dir, h, foundation)
     finally:
