@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HomeBase</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header>
+    <span class="logo">HomeBase</span>
+    <button id="add-tile-btn" class="btn-primary">+ Add Tile</button>
+  </header>
+
+  <main>
+    <div id="tile-grid" class="tile-grid"></div>
+    <p id="empty-state" class="empty-state hidden">
+      No tiles yet. Click <strong>+ Add Tile</strong> to get started.
+    </p>
+  </main>
+
+  <!-- Add / Edit modal -->
+  <div id="modal-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <h2 id="modal-title">Add Tile</h2>
+      <form id="tile-form" novalidate>
+        <div class="field">
+          <label for="tile-name">Name</label>
+          <input id="tile-name" type="text" placeholder="e.g. Google" autocomplete="off" required>
+        </div>
+        <div class="field">
+          <label for="tile-url">URL</label>
+          <input id="tile-url" type="text" placeholder="https://google.com" autocomplete="off" required>
+        </div>
+        <p id="form-error" class="form-error hidden"></p>
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="defaults.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
