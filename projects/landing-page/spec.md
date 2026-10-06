@@ -25,6 +25,13 @@ There should be no server involved.
 ## Environment
 - compliant browsers
 
+## Deployment
+- published via GitHub Pages using a GitHub Actions workflow
+  (`.github/workflows/deploy-landing-page.yaml`)
+- deploys on push to `main` when files under `projects/landing-page/` change,
+  or manually via workflow_dispatch
+- only `index.html` is published; spec/log files are not
+
 ## Workflow
 - After each logical change, update PROMPTS.md with the prompt and any 
   notable decisions, then git add and commit with a descriptive message

@@ -37,3 +37,20 @@
 
 **Notable decisions:**
 - `DEFAULT_TILES` admin config kept at the very top of the `<script>` block, clearly delimited with comments, so it remains easy to find and edit in the single file.
+
+---
+
+## 2026-10-06 — Publish via GitHub Pages
+
+**Prompt:**
+> Can you setup so that the page can get published as a github page?
+
+**What changed:**
+- Added `.github/workflows/deploy-landing-page.yaml`, which deploys the page to GitHub Pages with the official Pages actions
+- Added a Deployment section to `spec.md`
+
+**Notable decisions:**
+- **Actions-based deploy rather than branch/folder source**: the classic "deploy from branch" option only serves the repo root or `/docs`, and the page lives in `projects/landing-page/`. A workflow avoids moving files or keeping a `gh-pages` branch.
+- **Only `index.html` is published**: the workflow copies it into a staging `_site/` folder, so `spec.md` and `PROMPTS.md` aren't served. It also adds `.nojekyll` to skip Jekyll processing.
+- **Path-filtered trigger**: it deploys only when the landing page (or the workflow itself) changes on `main`. It can also be run manually.
+- **One-time repo setting required**: Settings → Pages → Source must be set to "GitHub Actions".
