@@ -23,6 +23,7 @@ extract() {
 
 rm -rf "$out"
 mkdir -p "$out"
+out="$(cd "$out" && pwd)"  # absolute, since the copy below runs from each project dir
 touch "$out/.nojekyll"
 
 items=""
@@ -31,7 +32,7 @@ for dir in "$repo_root"/projects/*/; do
   name="$(basename "$dir")"
 
   mkdir -p "$out/$name"
-  (cd "$dir" && find . -type f ! -name '*.md' -exec cp --parents {} "$out/$name/" \;)
+  (cd "$dir" && find . -type f ! -name '*.md' -exec cp --parents -t "$out/$name/" {} +)
 
   title="$(extract 's:.*<title>\(.*\)</title>.*:\1:p' "$dir/index.html")"
   desc="$(extract 's:.*<meta name="description" content="\([^"]*\)".*:\1:p' "$dir/index.html")"
