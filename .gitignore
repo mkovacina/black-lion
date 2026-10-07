@@ -52,3 +52,6 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# GitHub Pages build output (scripts/build-site.sh)
+_site/
