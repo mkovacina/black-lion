@@ -73,3 +73,17 @@
 - **Convention-based publishing**: any `projects/<name>/` folder with an `index.html` is published at `/<name>/`, with `*.md` files left out. New projects need no workflow changes.
 - **Generated root index**: the index lists each project using its `<title>` and description meta, so it can't drift out of sync with the projects.
 - **Script, not inline YAML**: the build logic lives in a script so it can be run and previewed locally.
+
+---
+
+## 2026-10-07 — Fix 404 on the published page
+
+**Prompt:**
+> I merged it but I'm getting a 404 when trying to access the page.
+
+**Root cause:**
+- The workflow calls `scripts/build-site.sh _site` with a relative output path. The copy step runs from inside each project folder, so `cp` was pointed at a path that didn't exist and failed. `find -exec … \;` ignores a failing command, so the build still succeeded and deployed a site whose `landing-page/` folder was empty.
+
+**What changed:**
+- `build-site.sh` turns the output path into an absolute path before copying
+- The copy uses `find -exec … +`, which passes a `cp` failure through, so under `set -e` a broken copy now fails the build instead of deploying an incomplete site
