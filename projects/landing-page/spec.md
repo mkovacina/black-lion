@@ -26,11 +26,12 @@ There should be no server involved.
 - compliant browsers
 
 ## Deployment
-- published via GitHub Pages using a GitHub Actions workflow
-  (`.github/workflows/deploy-landing-page.yaml`)
-- deploys on push to `main` when files under `projects/landing-page/` change,
-  or manually via workflow_dispatch
-- only `index.html` is published; spec/log files are not
+- published with the rest of the repo's projects via GitHub Pages, by the
+  `.github/workflows/deploy-site.yaml` workflow (Pages source: GitHub Actions)
+- served at `/black-lion/landing-page/`; the site root `/black-lion/` is a
+  generated index linking to each project
+- the index entry uses the page's `<title>` and `<meta name="description">`
+- only non-Markdown files are published; spec/log files are not
 
 ## Workflow
 - After each logical change, update PROMPTS.md with the prompt and any 

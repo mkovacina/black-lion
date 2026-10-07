@@ -54,3 +54,22 @@
 - **Only `index.html` is published**: the workflow copies it into a staging `_site/` folder, so `spec.md` and `PROMPTS.md` aren't served. It also adds `.nojekyll` to skip Jekyll processing.
 - **Path-filtered trigger**: it deploys only when the landing page (or the workflow itself) changes on `main`. It can also be run manually.
 - **One-time repo setting required**: Settings → Pages → Source must be set to "GitHub Actions".
+
+---
+
+## 2026-10-07 — Publish alongside other projects with a site index
+
+**Prompt:**
+> Option 2, with a simple index linking to each project.
+> (The repo already serves `main` / root through "Deploy from a branch", under the custom domain `kovacinacomputing.com/black-lion/`.)
+
+**What changed:**
+- Replaced the landing-page-only workflow with `.github/workflows/deploy-site.yaml`, which publishes the whole repo site
+- Added `scripts/build-site.sh`, which builds the site into `_site/`
+- Added a `<meta name="description">` to `index.html` so the site index can show a one-line blurb
+
+**Notable decisions:**
+- **One Pages site per repo**: a repo can only have one Pages source, so the workflow publishes every project rather than just HomeBase. The Pages source has to be switched from "Deploy from a branch" to "GitHub Actions".
+- **Convention-based publishing**: any `projects/<name>/` folder with an `index.html` is published at `/<name>/`, with `*.md` files left out. New projects need no workflow changes.
+- **Generated root index**: the index lists each project using its `<title>` and description meta, so it can't drift out of sync with the projects.
+- **Script, not inline YAML**: the build logic lives in a script so it can be run and previewed locally.

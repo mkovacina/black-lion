@@ -1,11 +1,12 @@
-name: Deploy landing page to GitHub Pages
+name: Deploy site to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
-      - "projects/landing-page/**"
-      - ".github/workflows/deploy-landing-page.yaml"
+      - "projects/**"
+      - "scripts/build-site.sh"
+      - ".github/workflows/deploy-site.yaml"
   workflow_dispatch:
 
 permissions:
@@ -27,11 +28,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Stage site
-        run: |
-          mkdir -p _site
-          cp projects/landing-page/index.html _site/
-          touch _site/.nojekyll
+      - name: Build site
+        run: ./scripts/build-site.sh _site
 
       - uses: actions/configure-pages@v5
 
